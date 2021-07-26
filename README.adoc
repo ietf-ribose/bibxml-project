@@ -96,3 +96,58 @@ citations, including new implementations for these datasets:
 * `bibxml-ieee`
 * `bibxml-doi`
 * `bibxml-iana`
+
+
+== Deliverable: Infrastructure support
+
+NOTE: Items described here are subject to improvement.
+
+A Kubernetes setup will be used to run various Docker containers.
+This setup makes it easier to mirror the production and local
+development environments, given that Docker Desktop now supports a
+single node Kubernetes cluster.
+
+This setup forgoes the need for a database server to minimize maintenance
+effort and ongoing costs.
+
+The following components are needed:
+
+. Software
+.. Django BibXML Service application
+.. BibXML data utilities as part of the BibXML Service package
+  (used to fetch external citations, including rewritten `doilit`
+  and other related scripts)
+.. Mechanism to build search index from BibXML
+
+. Infrastructure
+.. A dataset storage location, which could be as part of the
+  compute instance, a shared drive or a cloud volume;
+
+.. Docker containers that run various components, including:
+... the Django BibXML Service
+... an ElasticSearch container
+... the dataset storage location presented as a persistent volume
+   via Kubernetes
+
+.. A logging location is provided as a shared volume
+
+.. A backup location (preferably in the cloud, such as AWS S3) for
+  the dataset storage volume
+
+. Infrastructure configuration
+
+.. Configuration for general infrastructure deployment
+
+.. Helm configuration used to parameterize environment-specific values
+  between production and development
+
+.. Definitions for Kubernetes cron jobs that will execute based
+  on time-triggered citation updates (e.g. `bibxml-w3c`)
+
+All created components will be delivered in an open source manner
+as required.
+
+The resulting architecture is shown here.
+
+.Infrastructure architecture
+image::architecture.png[]
