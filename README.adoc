@@ -7,37 +7,37 @@
 > citations that are generated on demand and then
 > temporarily cached before being purged, organised into
 > datasets as detailed below.
-
+>
 > 2. An interface to the datastore suitable as the data
 > source for an rsync server so that datasets of persistent
 > citations can be served by rsync.
-
+>
 > 3. Generation of XML citations from each of the sources
 > detailed below and adding the generated citations to the
 > datastore.
-
+>
 > 4. A public API for retrieval of one or more XML citations
 > from the datastore, including those generated on demand.
-
+>
 > 5. A public API for searching and browsing over the
 > datasets of persistent citations.
-
+>
 > 6. A private API for triggering a new generation or
 > regeneration.
-
+>
 > 7. An interactive web page through which anyone can access
 > any XML citations in the datastore, including those
 > generated on demand.
-
+>
 > 8. For datasets of persistent citations, the interactive
 > web page should provide searching and browsing over those
 > datasets as well as download of the full dataset (zipped
 > and gzipped tarballs).
-
+>
 > 9. A centralised single log of all access, including the
 > import of rsync logs, to provide visibility into use of
 > the service.
-
+>
 > 10. A Dockerfile that will be used in a full CI/CD
 > environment.
 
