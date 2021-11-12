@@ -42,7 +42,7 @@
 > environment.
 
 
-== Deliverable: API definitions
+== API definitions
 
 An OpenAPI specification and accompanying guidance will be developed
 for the BibXML Service with the aim that independent implementation
@@ -51,42 +51,60 @@ and external API usage is barrier-free.
 This covers both the public and private API portions of the service.
 
 
-== Deliverable: software components
+== Components
 
-=== Web application
+=== Architecture
 
-A Django web application will be developed with the following functionality:
+.Infrastructure architecture
+image::architecture.png[]
 
-. interactive website that allows browsing XML citations in the datastore,
-  including those fetched from authoritative sources:
-  `bibxml-rfcs`, `bibxml-misc`, `bibxml-ids`, `bibxml-w3c`, `bibxml-3gpp`,
-  `bibxml-ieee`, `bibxml-rfcsubseries`. We assume that `bibxml-iana` and `bibxml-doi`
-  content do not need to be browseable because of their limited utility
-  (the cache being incomplete dataset, each entry is only available for 24
-  hours);
+=== BibXML web service
 
-. public API that allows for retrieval of one or more XML citations from the
-  datastore. This covers all the bibxml data sources. In the case of
-  `bibxml-iana`, and `bibxml-doi`, a cached entry will be made available
-  for up to 24-hours;
+For the public:
 
-. public API that allows for searching over the datasets for IETF and external
+. Interactive website that allows browsing XML citations in the datastore,
+including those fetched from authoritative sources.
++
+NOTE: These include `bibxml-rfcs`, `bibxml-misc`, `bibxml-ids`, `bibxml-w3c`,
+`bibxml-3gpp`, `bibxml-ieee`, `bibxml-rfcsubseries` and `bibxml-iana`.
++
+NOTE: `bibxml-doi` data will not be browsable because they are cached and will
+represent a very minor portion of the full dataset, and therefore are of limited
+utility.
+
+. Public API that allows for retrieval of one or more XML citations from the
+datastore. This covers all the bibxml data sources. In the case of `bibxml-doi`,
+a cached entry will be made available for up to 24-hours.
+
+. Public API that allows for searching over the datasets for IETF and external
   persistent citations via a search engine;
-
-. private API that allows triggering of update routines that retrieves data
-  from remote bibxml data sources;
-
-. private API for performing updates to the citation datastore, for
-  the updates to the IETF persistent citations (`bibxml-rfcs`, `bibxml-ids`,
-  and `bibxml-rfcsubseries`);
-
-. the authentication mechanism will integrate with Datatracker-generated
-  or administratively provisioned API tokens;
 
 . provide easy extensions to the output such that future formats including
   BibTeX and CSL can be rendered.
 
-=== Citation importers
+For administration:
+
+. private API that allows triggering of update routines that retrieves data
+  from remote bibxml data sources: this triggers the BibXML Indexer or the
+  data importers.
+
+. private API for performing updates to the citation datastore, for
+  the updates to the IETF persistent citations (`bibxml-rfcs`, `bibxml-ids`,
+  and `bibxml-rfcsubseries`): this triggers the BibXML Indexer.
+
+Authentication:
+
+. the authentication mechanism will integrate with Datatracker-generated
+  or administratively provisioned API tokens;
+
+
+=== BibXML indexer
+
+This component is used to import BibXML / Relaton data from GitHub repositories
+into the PostgreSQL server.
+
+
+=== Bibliographic information retrieval
 
 Software components will be provided for the import of external
 citations, including new implementations for these datasets:
@@ -94,13 +112,15 @@ citations, including new implementations for these datasets:
 * `bibxml-w3c`
 * `bibxml-3gpp`
 * `bibxml-ieee`
-* `bibxml-doi`
 * `bibxml-iana`
+* `bibxml-rfcs`
+* `bibxml-rfcsubseries`
+* `bibxml-ids`
+* `bibxml-doi`
 
 
 == Deliverable: Infrastructure support
 
-NOTE: Items described here are subject to improvement.
 
 A Kubernetes setup will be used to run various Docker containers.
 This setup makes it easier to mirror the production and local
@@ -113,26 +133,14 @@ effort and ongoing costs.
 The following components are needed:
 
 . Software
-.. Django BibXML Service application
-.. BibXML data utilities as part of the BibXML Service package
-  (used to fetch external citations, including rewritten `doilit`
-  and other related scripts)
-.. Mechanism to build search index from BibXML
+.. BibXML web service
+.. BibXML indexer
 
 . Infrastructure
-.. A dataset storage location, which could be as part of the
-  compute instance, a shared drive or a cloud volume;
-
-.. Docker containers that run various components, including:
-... the Django BibXML Service
-... an ElasticSearch container
-... the dataset storage location presented as a persistent volume
-   via Kubernetes
+.. GitHub repositories
+.. PostgreSQL server
 
 .. A logging location is provided as a shared volume
-
-.. A backup location (preferably in the cloud, such as AWS S3) for
-  the dataset storage volume
 
 . Infrastructure configuration
 
@@ -147,7 +155,3 @@ The following components are needed:
 All created components will be delivered in an open source manner
 as required.
 
-The resulting architecture is shown here.
-
-.Infrastructure architecture
-image::architecture.png[]
